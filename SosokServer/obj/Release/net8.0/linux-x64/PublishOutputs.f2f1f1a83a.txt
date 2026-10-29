@@ -1,0 +1,5 @@
+C:\Users\11\source\repos\SosokShared\SosokServer\bin\Release\net8.0\linux-x64\publish\SosokServer.pdb
+C:\Users\11\source\repos\SosokShared\SosokServer\bin\Release\net8.0\linux-x64\publish\SosokClientApp.runtimeconfig.json
+C:\Users\11\source\repos\SosokShared\SosokServer\bin\Release\net8.0\linux-x64\publish\SosokClientApp.pdb
+C:\Users\11\source\repos\SosokShared\SosokServer\bin\Release\net8.0\linux-x64\publish\SosokShared.pdb
+C:\Users\11\source\repos\SosokShared\SosokServer\bin\Release\net8.0\linux-x64\publish\SosokServer

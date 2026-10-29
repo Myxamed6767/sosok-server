@@ -1,0 +1,11 @@
+C:\Users\11\source\repos\SosokShared\SosokShared\bin\Release\net8.0\SosokShared.deps.json
+C:\Users\11\source\repos\SosokShared\SosokShared\bin\Release\net8.0\SosokShared.dll
+C:\Users\11\source\repos\SosokShared\SosokShared\bin\Release\net8.0\SosokShared.pdb
+C:\Users\11\source\repos\SosokShared\SosokShared\obj\Release\net8.0\SosokShared.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\11\source\repos\SosokShared\SosokShared\obj\Release\net8.0\SosokShared.AssemblyInfoInputs.cache
+C:\Users\11\source\repos\SosokShared\SosokShared\obj\Release\net8.0\SosokShared.AssemblyInfo.cs
+C:\Users\11\source\repos\SosokShared\SosokShared\obj\Release\net8.0\SosokShared.csproj.CoreCompileInputs.cache
+C:\Users\11\source\repos\SosokShared\SosokShared\obj\Release\net8.0\SosokShared.dll
+C:\Users\11\source\repos\SosokShared\SosokShared\obj\Release\net8.0\refint\SosokShared.dll
+C:\Users\11\source\repos\SosokShared\SosokShared\obj\Release\net8.0\SosokShared.pdb
+C:\Users\11\source\repos\SosokShared\SosokShared\obj\Release\net8.0\ref\SosokShared.dll

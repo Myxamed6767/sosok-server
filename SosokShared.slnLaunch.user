@@ -1,0 +1,15 @@
+[
+  {
+    "Name": "Новый профиль",
+    "Projects": [
+      {
+        "Path": "SosokServer\\SosokServer.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "SosokClientApp\\SosokClientApp.csproj",
+        "Action": "Start"
+      }
+    ]
+  }
+]

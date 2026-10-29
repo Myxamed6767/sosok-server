@@ -1,0 +1,14 @@
+C:\Users\11\source\repos\SosokShared\SosokClientApp\obj\Debug\net8.0\SosokClientApp.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\11\source\repos\SosokShared\SosokClientApp\obj\Debug\net8.0\SosokClientApp.AssemblyInfoInputs.cache
+C:\Users\11\source\repos\SosokShared\SosokClientApp\obj\Debug\net8.0\SosokClientApp.AssemblyInfo.cs
+C:\Users\11\source\repos\SosokShared\SosokClientApp\obj\Debug\net8.0\SosokClientApp.csproj.CoreCompileInputs.cache
+C:\Users\11\source\repos\SosokShared\SosokClientApp\bin\Debug\net8.0\SosokClientApp.exe
+C:\Users\11\source\repos\SosokShared\SosokClientApp\bin\Debug\net8.0\SosokClientApp.deps.json
+C:\Users\11\source\repos\SosokShared\SosokClientApp\bin\Debug\net8.0\SosokClientApp.runtimeconfig.json
+C:\Users\11\source\repos\SosokShared\SosokClientApp\bin\Debug\net8.0\SosokClientApp.dll
+C:\Users\11\source\repos\SosokShared\SosokClientApp\bin\Debug\net8.0\SosokClientApp.pdb
+C:\Users\11\source\repos\SosokShared\SosokClientApp\obj\Debug\net8.0\SosokClientApp.dll
+C:\Users\11\source\repos\SosokShared\SosokClientApp\obj\Debug\net8.0\refint\SosokClientApp.dll
+C:\Users\11\source\repos\SosokShared\SosokClientApp\obj\Debug\net8.0\SosokClientApp.pdb
+C:\Users\11\source\repos\SosokShared\SosokClientApp\obj\Debug\net8.0\SosokClientApp.genruntimeconfig.cache
+C:\Users\11\source\repos\SosokShared\SosokClientApp\obj\Debug\net8.0\ref\SosokClientApp.dll
